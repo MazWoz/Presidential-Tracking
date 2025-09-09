@@ -32,7 +32,7 @@ jobs:
         run: find . -name '*.ipynb' -type f -execdir jupyter nbconvert --to html --HTMLExporter.extra_loaders=plotly.io.html.PlotlyHTMLExporter {} \;
   
       - name: Raname for easier pathing
-        run: mv 'Models_Visuals.html' 'index.html';
+        run: mv 'Model_Visuals.html' 'index.html';
 
       - name: Push analysis folder to the main branch
         uses: s0/git-publish-subdir-action@develop
