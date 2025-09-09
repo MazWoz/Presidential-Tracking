@@ -3,7 +3,7 @@ name: Build and Deploy Analysis Site
 on:
   push:
     branches:
-      - main # This workflow runs when you push to the 'develop' branch
+      - main # This workflow runs when you push to the 'main' branch
 
 jobs:
   build-and-deploy:
@@ -27,10 +27,10 @@ jobs:
 
       - name: Run Notebook to Generate HTML Files
         run: |
-          # This command's only job is to RUN your notebook. 
-          # The Python code inside your notebook is what creates the `analysis` folder
+          # This command executes your notebook. 
+          # The Python code inside your notebook creates the `analysis` folder
           # and saves the interactive .html files.
-          jupyter nbconvert --to notebook --execute "Model and Visuals.ipynb" --output "index.html"
+          jupyter nbconvert --to notebook --execute "Model and Visuals.ipynb" --output "Model and Visuals.ipynb"
 
       - name: Prepare Files for Publishing
         run: |
@@ -38,6 +38,9 @@ jobs:
           # so they are also included in the deployment.
           cp "Model and Visuals.ipynb" analysis/
           cp *.csv analysis/
+          # The HTML files should already be in the analysis folder from the previous step.
+          # If they are not, you can move them now:
+          # mv *.html analysis/
 
       - name: Deploy to GitHub Pages
         uses: s0/git-publish-subdir-action@develop
