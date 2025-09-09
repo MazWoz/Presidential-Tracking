@@ -3,7 +3,7 @@ name: Build and Deploy Analysis Site
 on:
   push:
     branches:
-      - develop # This workflow runs when you push to the 'develop' branch
+      - main # This workflow runs when you push to the 'develop' branch
 
 jobs:
   build-and-deploy:
