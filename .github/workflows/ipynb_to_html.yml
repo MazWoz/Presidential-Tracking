@@ -18,9 +18,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pages: write
-      id-token: write
+      contents: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -31,7 +29,7 @@ jobs:
         run: pip install nbconvert
   
       - name: Convert all ipynb files to html (and delete ipynb files)
-        run: find . -name '*.ipynb' -type f -execdir jupyter nbconvert --template classic --to html {} \; -execdir rm {} \;
+        run: find . -name '*.ipynb' -type f -execdir jupyter nbconvert --to html --template=classic --HTMLExporter.extra_loaders=plotly.io.html.PlotlyHTMLExporter {} \;
 
       - name: Push analysis folder to the main branch
         uses: s0/git-publish-subdir-action@develop
