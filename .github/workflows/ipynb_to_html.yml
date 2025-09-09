@@ -1,51 +1,42 @@
-name: Build and Deploy Analysis Site
+# This is a basic workflow to help you get started with Actions
 
+name: Convert ipynb files to html
+
+# Controls when the action will run. 
 on:
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches:
-      - main # This workflow runs when you push to the 'main' branch
+    branches: [ main ]
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-and-deploy:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Allows the action to push to the deployment branch
+      contents: write
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11' # Or your preferred version
+      - name: Install nbconvert
+        run: pip install nbconvert
+  
+      - name: Convert all ipynb files to html (and delete ipynb files)
+        run: find . -name '*.ipynb' -type f -execdir jupyter nbconvert --to html --HTMLExporter.extra_loaders=plotly.io.html.PlotlyHTMLExporter {} \;
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install jupyter pandas numpy scikit-learn plotly
-
-      - name: Run Notebook to Generate HTML Files
-        run: |
-          # This command executes your notebook. 
-          # The Python code inside your notebook creates the `analysis` folder
-          # and saves the interactive .html files.
-          jupyter nbconvert --to notebook --execute "Model and Visuals.ipynb" --output "Model and Visuals.ipynb"
-
-      - name: Prepare Files for Publishing
-        run: |
-          # Copy the source notebook and data files into the analysis folder
-          # so they are also included in the deployment.
-          cp "Model and Visuals.ipynb" analysis/
-          cp *.csv analysis/
-          # The HTML files should already be in the analysis folder from the previous step.
-          # If they are not, you can move them now:
-          # mv *.html analysis/
-
-      - name: Deploy to GitHub Pages
+      - name: Push analysis folder to the main branch
         uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
-          BRANCH: build # The branch to deploy TO (e.g., main or gh-pages)
-          FOLDER: analysis # The folder to deploy FROM
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FOLDER: analysis # The directory where your assets are generated
+          BRANCH: build # The branch name where you want to push the assets
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub will automatically add this - you don't need to bother getting a token
+          MESSAGE: "Build: ({sha}) {msg}" # The commit message
+          SQUASH_HISTORY: true # If set to true, all previous commits on the target branch will be discarded. For example, if you are deploying a static site with lots of binary artifacts, this can help the repository becoming overly bloated.
