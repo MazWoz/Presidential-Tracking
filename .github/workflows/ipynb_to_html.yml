@@ -28,11 +28,8 @@ jobs:
       - name: Install nbconvert
         run: pip install nbconvert
   
-      - name: Convert all ipynb files to html (and delete ipynb files)
-        run: find . -name '*.ipynb' -type f -execdir jupyter nbconvert --to html --HTMLExporter.extra_loaders=plotly.io.html.PlotlyHTMLExporter {} \;
-  
-      - name: Raname for easier pathing
-        run: mv 'analysis/Model_Visuals.html' 'analysis/index.html';
+      - name: Convert ipynb to html (without code) and rename
+        run: jupyter nbconvert --to html --no-input "analysis/Model and Visuals.ipynb" --output "analysis/index.html" 
 
       - name: Push analysis folder to the main branch
         uses: s0/git-publish-subdir-action@develop
