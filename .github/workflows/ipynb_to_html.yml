@@ -26,10 +26,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: pip install nbconvert jupyterlab-miami-nights
+        run: pip install nbconvert jupyterlab_materialdarker
   
       - name: Convert all ipynb files to html (and delete ipynb files)
-        run: find . -name '*.ipynb' -type f -execdir jupyter nbconvert --to html --no-input --template lab --theme jupyterlab_miami_nights --HTMLExporter.extra_loaders=plotly.io.html.PlotlyHTMLExporter {} \;
+        run: find . -name '*.ipynb' -type f -execdir jupyter nbconvert --to html --no-input --template lab --theme jupyterlab_materialdarker --HTMLExporter.extra_loaders=plotly.io.html.PlotlyHTMLExporter {} \;
   
       - name: Raname for easier pathing
         run: mv 'analysis/Model_Visuals.html' 'analysis/index.html';
